@@ -1,0 +1,19 @@
+<% if (success && success.length > 0) { %>
+  <div class="alert alert-success" role="alert" id="flash-alert-success">
+    <div class="alert-content">
+      <i class="fa-solid fa-circle-check alert-icon"></i>
+      <span><%= success %></span>
+    </div>
+    <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div class="alert alert-error" role="alert" id="flash-alert-error">
+    <div class="alert-content">
+      <i class="fa-solid fa-triangle-exclamation alert-icon"></i>
+      <span><%= error %></span>
+    </div>
+    <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+  </div>
+<% } %>

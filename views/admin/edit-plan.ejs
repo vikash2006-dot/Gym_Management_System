@@ -1,0 +1,56 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-pen"></i> Edit Plan: <%= plan.name %></h1>
+          <p class="page-subtitle">Update duration, pricing, and package details</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/plans" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Plans
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card form-card">
+        <form action="/admin/plans/<%= plan._id %>?_method=PUT" method="POST">
+          <div class="form-group">
+            <label for="name" class="form-label">Plan Name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" class="form-control" value="<%= plan.name %>" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="duration" class="form-label">Duration (Days) <span class="req">*</span></label>
+              <input type="number" id="duration" name="duration" class="form-control" value="<%= plan.duration %>" min="1" required>
+            </div>
+
+            <div class="form-group">
+              <label for="price" class="form-label">Price (₹) <span class="req">*</span></label>
+              <input type="number" id="price" name="price" class="form-control" value="<%= plan.price %>" min="0" step="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description / Features</label>
+            <textarea id="description" name="description" class="form-control"><%= plan.description || '' %></textarea>
+          </div>
+
+          <div class="form-actions">
+            <a href="/admin/plans" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i> Update Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

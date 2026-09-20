@@ -1,0 +1,106 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-calendar-check"></i> Attendance Tracking</h1>
+          <p class="page-subtitle">Check-in for your daily workout sessions and review your attendance log</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/member/dashboard" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Dashboard
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <!-- Today's Attendance Check-in Banner -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(31, 41, 55, 0.6)); border-color: rgba(239, 68, 68, 0.2);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="font-size: 0.85rem; text-transform: uppercase; color: var(--accent-primary); font-weight: 700; letter-spacing: 0.5px;">
+              TODAY'S SESSION
+            </div>
+            <div style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 700; margin-top: 0.25rem;">
+              <%= todayDateStr %>
+            </div>
+          </div>
+
+          <div>
+            <% if (hasMarkedToday) { %>
+              <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 0.6rem 1.25rem; border-radius: var(--radius-md); font-weight: 600;">
+                <i class="fa-solid fa-circle-check"></i> Attendance Already Marked for Today
+              </div>
+            <% } else { %>
+              <form action="/member/attendance" method="POST">
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
+                  <i class="fa-solid fa-fingerprint"></i> Mark Today's Attendance
+                </button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance History Table -->
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="card-header" style="padding: 1.25rem 1.5rem 0.75rem 1.5rem;">
+          <h2 class="card-title">
+            <i class="fa-solid fa-clock-rotate-left"></i> Attendance History
+          </h2>
+          <span style="font-size: 0.85rem; color: var(--text-secondary);">
+            Total Visits: <strong><%= attendanceRecords.length %></strong>
+          </span>
+        </div>
+
+        <% if (attendanceRecords && attendanceRecords.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Session Date</th>
+                  <th>Day of Week</th>
+                  <th>Status</th>
+                  <th>Recorded At</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% attendanceRecords.forEach(att => { %>
+                  <tr>
+                    <td>
+                      <strong>
+                        <%= new Date(att.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                      </strong>
+                    </td>
+                    <td>
+                      <%= new Date(att.date).toLocaleDateString('en-US', { weekday: 'long' }) %>
+                    </td>
+                    <td>
+                      <span class="badge badge-active">
+                        <i class="fa-solid fa-check"></i> <%= att.status %>
+                      </span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">
+                      <%= new Date(att.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-calendar-xmark empty-state-icon"></i>
+            <h3 class="empty-state-title">No Attendance Records Found</h3>
+            <p class="empty-state-desc">You haven't logged any workout sessions yet. Click the button above to mark your first session!</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

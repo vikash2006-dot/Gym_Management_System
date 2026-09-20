@@ -1,0 +1,62 @@
+<%- include('../partials/header', { title: 'Login - TitanFit Gym Management' }) %>
+<%- include('../partials/navbar') %>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-brand-icon">
+        <i class="fa-solid fa-dumbbell"></i>
+      </div>
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-subtitle">Sign in to access your workout portal</p>
+    </div>
+
+    <%- include('../partials/flash') %>
+
+    <!-- College Demonstration Credentials Box -->
+    <div class="demo-credentials-box">
+      <strong><i class="fa-solid fa-circle-info"></i> Demo Credentials:</strong>
+      <div>Admin: <code>admin@gym.com</code> / <code>admin123</code></div>
+      <div>Trainer: <code>rahul@gym.com</code> / <code>trainer123</code></div>
+      <div>Member: <code>vikas@gym.com</code> / <code>member123</code></div>
+    </div>
+
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address <span class="req">*</span></label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-control" 
+          placeholder="name@example.com" 
+          required 
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password <span class="req">*</span></label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="Enter your password" 
+          required 
+          autocomplete="current-password"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>New to TitanFit? <a href="/register">Create a Member Account</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

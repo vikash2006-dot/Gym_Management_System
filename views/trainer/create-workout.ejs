@@ -1,0 +1,163 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-dumbbell"></i> Create Workout Plan</h1>
+          <p class="page-subtitle">Designing customized fitness routine for <strong><%= member.name %></strong></p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/trainer/members" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Members
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card" style="max-width: 900px; margin: 0 auto;">
+        <form action="/trainer/workouts/create/<%= member._id %>" method="POST">
+          <div class="form-group">
+            <label for="planName" class="form-label">Workout Plan Name <span class="req">*</span></label>
+            <input 
+              type="text" 
+              id="planName" 
+              name="planName" 
+              class="form-control" 
+              placeholder="e.g. 5-Day Hypertrophy & Strength Split" 
+              value="<%= existingPlan ? existingPlan.planName : '' %>"
+              required
+            >
+          </div>
+
+          <div style="margin: 1.5rem 0 0.75rem 0; display: flex; align-items: center; justify-content: space-between;">
+            <label class="form-label" style="margin-bottom: 0; font-size: 1rem; color: var(--text-primary);">
+              <i class="fa-solid fa-list-check" style="color: var(--accent-primary);"></i> Exercises & Schedule
+            </label>
+            <button type="button" class="btn btn-sm btn-primary" id="addExerciseBtn">
+              <i class="fa-solid fa-plus"></i> Add Exercise
+            </button>
+          </div>
+
+          <div id="exerciseRowsContainer">
+            <% if (existingPlan && existingPlan.exercises && existingPlan.exercises.length > 0) { %>
+              <% existingPlan.exercises.forEach(ex => { %>
+                <div class="exercise-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" name="exercise" class="form-control" placeholder="Exercise Name" value="<%= ex.exercise %>" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="number" name="sets" class="form-control" placeholder="Sets" min="1" value="<%= ex.sets %>" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="number" name="reps" class="form-control" placeholder="Reps" min="1" value="<%= ex.reps %>" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <select name="dayOfWeek" class="form-control" required>
+                      <% ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(day => { %>
+                        <option value="<%= day %>" <%= ex.dayOfWeek === day ? 'selected' : '' %>><%= day %></option>
+                      <% }); %>
+                    </select>
+                  </div>
+                  <button type="button" class="btn-remove-row" title="Remove Exercise">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <!-- Default starter rows -->
+              <div class="exercise-row">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="text" name="exercise" class="form-control" placeholder="Exercise Name (e.g. Bench Press)" value="Bench Press" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="sets" class="form-control" placeholder="Sets" min="1" value="3" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="reps" class="form-control" placeholder="Reps" min="1" value="10" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <select name="dayOfWeek" class="form-control" required>
+                    <option value="Monday" selected>Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                  </select>
+                </div>
+                <button type="button" class="btn-remove-row" title="Remove Exercise">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+
+              <div class="exercise-row">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="text" name="exercise" class="form-control" placeholder="Exercise Name (e.g. Barbell Squats)" value="Barbell Squats" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="sets" class="form-control" placeholder="Sets" min="1" value="3" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="reps" class="form-control" placeholder="Reps" min="1" value="12" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <select name="dayOfWeek" class="form-control" required>
+                    <option value="Monday" selected>Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                  </select>
+                </div>
+                <button type="button" class="btn-remove-row" title="Remove Exercise">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+
+              <div class="exercise-row">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="text" name="exercise" class="form-control" placeholder="Exercise Name (e.g. Lat Pulldown)" value="Lat Pulldown" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="sets" class="form-control" placeholder="Sets" min="1" value="3" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="reps" class="form-control" placeholder="Reps" min="1" value="12" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <select name="dayOfWeek" class="form-control" required>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday" selected>Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                  </select>
+                </div>
+                <button type="button" class="btn-remove-row" title="Remove Exercise">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="form-actions">
+            <a href="/trainer/members" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i> Save Workout Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

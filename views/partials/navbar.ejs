@@ -1,0 +1,42 @@
+<header class="top-navbar">
+  <div class="navbar-container">
+    <div class="navbar-left">
+      <% if (currentUser) { %>
+        <button id="sidebarToggle" class="mobile-toggle-btn" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      <% } %>
+      <a href="/" class="brand-logo">
+        <div class="brand-icon">
+          <i class="fa-solid fa-dumbbell"></i>
+        </div>
+        <span class="brand-name">TITAN<span>FIT</span></span>
+      </a>
+    </div>
+
+    <div class="navbar-right">
+      <% if (currentUser) { %>
+        <div class="user-profile-badge">
+          <div class="user-avatar">
+            <%= currentUser.name.charAt(0).toUpperCase() %>
+          </div>
+          <div class="user-details">
+            <span class="user-name"><%= currentUser.name %></span>
+            <span class="role-pill role-<%= currentUser.role %>">
+              <%= currentUser.role.toUpperCase() %>
+            </span>
+          </div>
+        </div>
+        <a href="/logout" class="btn-logout" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="logout-text">Logout</span>
+        </a>
+      <% } else { %>
+        <div class="nav-auth-links">
+          <a href="/login" class="nav-link">Sign In</a>
+          <a href="/register" class="btn-primary-sm">Join Now</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</header>

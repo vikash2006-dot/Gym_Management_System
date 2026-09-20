@@ -1,0 +1,96 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-dumbbell"></i> Workout Plans</h1>
+          <p class="page-subtitle">All active workout routines created for your assigned trainees</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/trainer/members" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> New Plan for Member
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <% if (workoutPlans && workoutPlans.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Plan Name</th>
+                  <th>Assigned Member</th>
+                  <th>Total Exercises</th>
+                  <th>Days Covered</th>
+                  <th>Created Date</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% workoutPlans.forEach(wp => { %>
+                  <tr>
+                    <td>
+                      <strong style="font-size: 1rem;"><%= wp.planName %></strong>
+                    </td>
+                    <td>
+                      <strong><%= wp.member ? wp.member.name : 'Unknown' %></strong>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);"><%= wp.member ? wp.member.email : '' %></div>
+                    </td>
+                    <td>
+                      <span class="badge badge-active">
+                        <%= wp.exercises.length %> Exercises
+                      </span>
+                    </td>
+                    <td>
+                      <% 
+                        const uniqueDays = [...new Set(wp.exercises.map(e => e.dayOfWeek))];
+                      %>
+                      <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        <% uniqueDays.forEach(d => { %>
+                          <span style="font-size: 0.75rem; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">
+                            <%= d.substring(0, 3) %>
+                          </span>
+                        <% }); %>
+                      </div>
+                    </td>
+                    <td>
+                      <%= new Date(wp.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                    </td>
+                    <td>
+                      <div class="action-buttons" style="justify-content: flex-end;">
+                        <a href="/trainer/workouts/edit/<%= wp._id %>" class="btn btn-sm btn-secondary" title="Edit Plan">
+                          <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+                        <form action="/trainer/workouts/<%= wp._id %>?_method=DELETE" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this workout plan?');">
+                          <button type="submit" class="btn btn-sm btn-danger" title="Delete Plan">
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-dumbbell empty-state-icon"></i>
+            <h3 class="empty-state-title">No Workout Plans Created Yet</h3>
+            <p class="empty-state-desc">Assign a customized exercise schedule to your members from the members list.</p>
+            <a href="/trainer/members" class="btn btn-primary">
+              <i class="fa-solid fa-users"></i> View Assigned Members
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

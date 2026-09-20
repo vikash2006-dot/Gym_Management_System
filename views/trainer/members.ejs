@@ -1,0 +1,95 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-users-rectangle"></i> My Assigned Members</h1>
+          <p class="page-subtitle">Manage fitness routines and schedules for your trainees</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/trainer/workouts" class="btn btn-secondary">
+            <i class="fa-solid fa-dumbbell"></i> View All Workout Plans
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <% if (members && members.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Member Name</th>
+                  <th>Contact Info</th>
+                  <th>Membership Status</th>
+                  <th>Membership Expiry</th>
+                  <th>Workout Plan Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% members.forEach(m => { %>
+                  <tr>
+                    <td>
+                      <strong style="font-size: 1rem;"><%= m.name %></strong>
+                    </td>
+                    <td>
+                      <div><%= m.email %></div>
+                      <div style="font-size: 0.8rem; color: var(--text-muted);"><%= m.phone || 'No phone' %></div>
+                    </td>
+                    <td>
+                      <% if (m.membershipStatus === 'Active') { %>
+                        <span class="badge badge-active"><i class="fa-solid fa-check"></i> Active</span>
+                      <% } else if (m.membershipStatus === 'Expired') { %>
+                        <span class="badge badge-expired"><i class="fa-solid fa-xmark"></i> Expired</span>
+                      <% } else { %>
+                        <span class="badge badge-no-plan">No Plan</span>
+                      <% } %>
+                    </td>
+                    <td><%= m.membershipExpiry %></td>
+                    <td>
+                      <% if (m.workoutPlan) { %>
+                        <span class="badge badge-active">
+                          <i class="fa-solid fa-dumbbell"></i> <%= m.workoutPlan.planName %> (<%= m.workoutPlan.exercises.length %> exercises)
+                        </span>
+                      <% } else { %>
+                        <span class="badge badge-expiring">
+                          <i class="fa-solid fa-triangle-exclamation"></i> Not Created
+                        </span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <div class="action-buttons" style="justify-content: flex-end;">
+                        <% if (m.workoutPlan) { %>
+                          <a href="/trainer/workouts/edit/<%= m.workoutPlan._id %>" class="btn btn-sm btn-secondary" title="Edit Workout Plan">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit Plan
+                          </a>
+                        <% } else { %>
+                          <a href="/trainer/workouts/create/<%= m._id %>" class="btn btn-sm btn-primary" title="Create Workout Plan">
+                            <i class="fa-solid fa-plus"></i> Create Plan
+                          </a>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-user-group empty-state-icon"></i>
+            <h3 class="empty-state-title">No Members Assigned Yet</h3>
+            <p class="empty-state-desc">You do not have any gym members currently assigned to you. The gym admin will allocate members soon.</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

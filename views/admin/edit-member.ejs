@@ -1,0 +1,68 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-pen-to-square"></i> Edit Member: <%= member.name %></h1>
+          <p class="page-subtitle">Update member contact details and trainer assignment</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/members" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Members
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card form-card">
+        <form action="/admin/members/<%= member._id %>?_method=PUT" method="POST">
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" class="form-control" value="<%= member.name %>" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address <span class="req">*</span></label>
+              <input type="email" id="email" name="email" class="form-control" value="<%= member.email %>" required>
+            </div>
+
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" id="phone" name="phone" class="form-control" value="<%= member.phone || '' %>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="trainerId" class="form-label">Assigned Trainer</label>
+            <select id="trainerId" name="trainerId" class="form-control">
+              <option value="">-- No Trainer Assigned --</option>
+              <% trainers.forEach(t => { %>
+                <option value="<%= t._id %>" <%= (member.trainer && member.trainer.toString() === t._id.toString()) ? 'selected' : '' %>>
+                  <%= t.name %> (<%= t.email %>)
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Reset Password (Leave blank to keep current password)</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="New password (min 6 characters)" minlength="6">
+          </div>
+
+          <div class="form-actions">
+            <a href="/admin/members" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

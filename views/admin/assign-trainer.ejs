@@ -1,0 +1,59 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-user-check"></i> Assign Trainer to Member</h1>
+          <p class="page-subtitle">Allocate a certified trainer to guide a gym member's workout regimen</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/members" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Members
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card form-card">
+        <form action="/admin/assign-trainer" method="POST">
+          <div class="form-group">
+            <label for="memberId" class="form-label">Select Member <span class="req">*</span></label>
+            <select id="memberId" name="memberId" class="form-control" required>
+              <option value="">-- Choose Member --</option>
+              <% members.forEach(m => { %>
+                <option value="<%= m._id %>" <%= (selectedMemberId && selectedMemberId.toString() === m._id.toString()) ? 'selected' : '' %>>
+                  <%= m.name %> (<%= m.email %>) — Current: <%= m.trainer ? m.trainer.name : 'No Trainer' %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="trainerId" class="form-label">Assign to Trainer <span class="req">*</span></label>
+            <select id="trainerId" name="trainerId" class="form-control" required>
+              <option value="">-- Select Trainer --</option>
+              <option value="none">-- Unassign / Remove Trainer --</option>
+              <% trainers.forEach(t => { %>
+                <option value="<%= t._id %>">
+                  <%= t.name %> (<%= t.email %>)
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <a href="/admin/members" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-user-check"></i> Assign Trainer
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

@@ -1,0 +1,88 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">
+            <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-warning);"></i> 
+            Expiring Memberships
+          </h1>
+          <p class="page-subtitle">Memberships reaching expiration within the upcoming 7 days</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/dashboard" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Dashboard
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <% if (expiringMemberships && expiringMemberships.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Member Name</th>
+                  <th>Email & Phone</th>
+                  <th>Subscribed Plan</th>
+                  <th>Expiry Date</th>
+                  <th>Days Remaining</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% expiringMemberships.forEach(item => { %>
+                  <tr style="background: rgba(245, 158, 11, 0.03);">
+                    <td>
+                      <strong style="font-size: 0.95rem;"><%= item.member ? item.member.name : 'Unknown' %></strong>
+                    </td>
+                    <td>
+                      <div><%= item.member ? item.member.email : '' %></div>
+                      <div style="font-size: 0.8rem; color: var(--text-muted);"><%= item.member ? item.member.phone : '' %></div>
+                    </td>
+                    <td>
+                      <span style="font-weight: 600;"><%= item.plan ? item.plan.name : 'N/A' %></span>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);">(<%= item.plan ? item.plan.duration : 0 %> days)</div>
+                    </td>
+                    <td>
+                      <%= new Date(item.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                    </td>
+                    <td>
+                      <span class="badge badge-expiring" style="font-size: 0.85rem;">
+                        <i class="fa-solid fa-hourglass-half"></i> <%= item.daysRemaining %> days left
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-expiring">Expiring Soon</span>
+                    </td>
+                    <td>
+                      <div class="action-buttons" style="justify-content: flex-end;">
+                        <a href="/admin/members/assign-membership/<%= item.member ? item.member._id : '' %>" class="btn btn-sm btn-primary">
+                          <i class="fa-solid fa-arrows-rotate"></i> Renew Subscription
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-calendar-check empty-state-icon" style="color: var(--accent-secondary);"></i>
+            <h3 class="empty-state-title">No Memberships Expiring in the Next 7 Days</h3>
+            <p class="empty-state-desc">All member subscriptions are either active beyond 7 days or have already expired.</p>
+            <a href="/admin/members" class="btn btn-secondary">View All Members</a>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

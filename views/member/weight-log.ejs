@@ -1,0 +1,133 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-weight-scale"></i> Body Weight Tracker</h1>
+          <p class="page-subtitle">Keep an accurate record of your body weight changes over time</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/member/progress" class="btn btn-primary">
+            <i class="fa-solid fa-chart-line"></i> View Progress Chart
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <!-- Weight Log Form Card -->
+      <div class="card form-card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+          <h2 class="card-title"><i class="fa-solid fa-plus-circle"></i> Log New Body Weight</h2>
+        </div>
+        <form action="/member/weight-log" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weight" class="form-label">Body Weight (kg) <span class="req">*</span></label>
+              <input 
+                type="number" 
+                step="0.1" 
+                id="weight" 
+                name="weight" 
+                class="form-control" 
+                placeholder="e.g. 72.5" 
+                min="20" 
+                max="300" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="date" class="form-label">Date (Optional)</label>
+              <input 
+                type="date" 
+                id="date" 
+                name="date" 
+                class="form-control" 
+                value="<%= new Date().toISOString().split('T')[0] %>"
+              >
+            </div>
+          </div>
+
+          <div class="form-actions" style="margin-top: 1rem; padding-top: 0.75rem;">
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-check"></i> Log Weight
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Weight Log History Table -->
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="card-header" style="padding: 1.25rem 1.5rem 0.75rem 1.5rem;">
+          <h2 class="card-title"><i class="fa-solid fa-list-ol"></i> Recorded Weight Entries</h2>
+          <span style="font-size: 0.85rem; color: var(--text-secondary);">
+            Total Logs: <strong><%= weightLogs.length %></strong>
+          </span>
+        </div>
+
+        <% if (weightLogs && weightLogs.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Entry Date</th>
+                  <th>Body Weight (kg)</th>
+                  <th>Difference from Previous</th>
+                  <th>Recorded On</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% weightLogs.forEach((log, index) => { %>
+                  <tr>
+                    <td>
+                      <strong>
+                        <%= new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                      </strong>
+                    </td>
+                    <td>
+                      <span style="font-size: 1.1rem; font-weight: 700; color: var(--accent-primary);">
+                        <%= log.weight.toFixed(1) %> kg
+                      </span>
+                    </td>
+                    <td>
+                      <% if (index < weightLogs.length - 1) { %>
+                        <% const diff = log.weight - weightLogs[index + 1].weight; %>
+                        <% if (diff > 0) { %>
+                          <span style="color: #f87171; font-weight: 600; font-size: 0.85rem;">
+                            <i class="fa-solid fa-arrow-up"></i> +<%= diff.toFixed(1) %> kg
+                          </span>
+                        <% } else if (diff < 0) { %>
+                          <span style="color: #34d399; font-weight: 600; font-size: 0.85rem;">
+                            <i class="fa-solid fa-arrow-down"></i> <%= diff.toFixed(1) %> kg
+                          </span>
+                        <% } else { %>
+                          <span style="color: var(--text-muted); font-size: 0.85rem;">0.0 kg</span>
+                        <% } %>
+                      <% } else { %>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Baseline</span>
+                      <% } %>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">
+                      <%= new Date(log.createdAt).toLocaleDateString() %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-weight-hanging empty-state-icon"></i>
+            <h3 class="empty-state-title">No Weight Records Available</h3>
+            <p class="empty-state-desc">Use the form above to log your current weight and begin tracking your body transformation progress.</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

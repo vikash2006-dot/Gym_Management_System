@@ -1,0 +1,82 @@
+<% if (currentUser) { %>
+<aside class="app-sidebar" id="appSidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-role-tag"><%= currentUser.role.toUpperCase() %> PORTAL</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <% if (currentUser.role === 'admin') { %>
+      <div class="nav-section-title">MANAGEMENT</div>
+      <a href="/admin/dashboard" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/admin/members" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'members') ? 'active' : '' %>">
+        <i class="fa-solid fa-users"></i>
+        <span>Members</span>
+      </a>
+      <a href="/admin/plans" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'plans') ? 'active' : '' %>">
+        <i class="fa-solid fa-id-card"></i>
+        <span>Membership Plans</span>
+      </a>
+      <a href="/admin/trainers" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'trainers') ? 'active' : '' %>">
+        <i class="fa-solid fa-user-ninja"></i>
+        <span>Trainers</span>
+      </a>
+      <a href="/admin/assign-trainer" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'assign-trainer') ? 'active' : '' %>">
+        <i class="fa-solid fa-user-check"></i>
+        <span>Assign Trainer</span>
+      </a>
+      <a href="/admin/expiring-memberships" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'expiring') ? 'active' : '' %>">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Expiring Memberships</span>
+      </a>
+
+    <% } else if (currentUser.role === 'trainer') { %>
+      <div class="nav-section-title">COACHING</div>
+      <a href="/trainer/dashboard" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/trainer/members" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'members') ? 'active' : '' %>">
+        <i class="fa-solid fa-users-rectangle"></i>
+        <span>My Members</span>
+      </a>
+      <a href="/trainer/workouts" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'workouts') ? 'active' : '' %>">
+        <i class="fa-solid fa-dumbbell"></i>
+        <span>Workout Plans</span>
+      </a>
+
+    <% } else if (currentUser.role === 'member') { %>
+      <div class="nav-section-title">MY FITNESS</div>
+      <a href="/member/dashboard" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+        <i class="fa-solid fa-house-user"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/member/workout" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'workout') ? 'active' : '' %>">
+        <i class="fa-solid fa-fire-flame-curved"></i>
+        <span>My Workout Plan</span>
+      </a>
+      <a href="/member/attendance" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'attendance') ? 'active' : '' %>">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span>Attendance</span>
+      </a>
+      <a href="/member/weight-log" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'weight') ? 'active' : '' %>">
+        <i class="fa-solid fa-weight-scale"></i>
+        <span>Weight Log</span>
+      </a>
+      <a href="/member/progress" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'progress') ? 'active' : '' %>">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Progress</span>
+      </a>
+    <% } %>
+
+    <div class="nav-section-title">ACCOUNT</div>
+    <a href="/logout" class="sidebar-link link-logout">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      <span>Logout</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<% } %>

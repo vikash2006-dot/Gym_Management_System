@@ -1,0 +1,18 @@
+<%- include('../partials/header', { title: title || 'Error' }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <div class="main-content-wrapper" style="width: 100%;">
+    <main class="page-content center-content">
+      <div class="error-card">
+        <div class="error-code"><%= typeof errorCode !== 'undefined' ? errorCode : 'Oops' %></div>
+        <h1 class="error-title"><%= typeof title !== 'undefined' ? title : 'Something went wrong' %></h1>
+        <p class="error-message"><%= typeof message !== 'undefined' ? message : 'An unexpected error occurred.' %></p>
+        <div class="error-actions">
+          <a href="/" class="btn btn-primary">
+            <i class="fa-solid fa-house"></i> Return Home
+          </a>
+        </div>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

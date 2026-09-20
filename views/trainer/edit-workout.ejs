@@ -1,0 +1,81 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-pen-to-square"></i> Edit Workout Plan</h1>
+          <p class="page-subtitle">Modifying routine for member <strong><%= plan.member.name %></strong></p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/trainer/workouts" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Workout Plans
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card" style="max-width: 900px; margin: 0 auto;">
+        <form action="/trainer/workouts/<%= plan._id %>?_method=PUT" method="POST">
+          <div class="form-group">
+            <label for="planName" class="form-label">Workout Plan Name <span class="req">*</span></label>
+            <input 
+              type="text" 
+              id="planName" 
+              name="planName" 
+              class="form-control" 
+              value="<%= plan.planName %>"
+              required
+            >
+          </div>
+
+          <div style="margin: 1.5rem 0 0.75rem 0; display: flex; align-items: center; justify-content: space-between;">
+            <label class="form-label" style="margin-bottom: 0; font-size: 1rem; color: var(--text-primary);">
+              <i class="fa-solid fa-list-check" style="color: var(--accent-primary);"></i> Exercises & Schedule
+            </label>
+            <button type="button" class="btn btn-sm btn-primary" id="addExerciseBtn">
+              <i class="fa-solid fa-plus"></i> Add Exercise
+            </button>
+          </div>
+
+          <div id="exerciseRowsContainer">
+            <% plan.exercises.forEach(ex => { %>
+              <div class="exercise-row">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="text" name="exercise" class="form-control" placeholder="Exercise Name" value="<%= ex.exercise %>" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="sets" class="form-control" placeholder="Sets" min="1" value="<%= ex.sets %>" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <input type="number" name="reps" class="form-control" placeholder="Reps" min="1" value="<%= ex.reps %>" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <select name="dayOfWeek" class="form-control" required>
+                    <% ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(day => { %>
+                      <option value="<%= day %>" <%= ex.dayOfWeek === day ? 'selected' : '' %>><%= day %></option>
+                    <% }); %>
+                  </select>
+                </div>
+                <button type="button" class="btn-remove-row" title="Remove Exercise">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            <% }); %>
+          </div>
+
+          <div class="form-actions">
+            <a href="/trainer/workouts" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i> Update Workout Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

@@ -1,0 +1,155 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-users"></i> Member Management</h1>
+          <p class="page-subtitle">View, search, filter, and manage all registered gym members</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/members/add" class="btn btn-primary">
+            <i class="fa-solid fa-user-plus"></i> Add Member
+          </a>
+          <a href="/admin/assign-trainer" class="btn btn-secondary">
+            <i class="fa-solid fa-user-check"></i> Assign Trainer
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <!-- Search & Filter Controls -->
+      <div class="filter-bar">
+        <form action="/admin/members" method="GET" class="search-form">
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input 
+              type="text" 
+              name="search" 
+              class="form-control" 
+              placeholder="Search by name or email..." 
+              value="<%= search %>"
+            >
+          </div>
+          <% if (filter && filter !== 'all') { %>
+            <input type="hidden" name="filter" value="<%= filter %>">
+          <% } %>
+          <button type="submit" class="btn btn-secondary btn-sm">Search</button>
+          <% if (search) { %>
+            <a href="/admin/members?filter=<%= filter %>" class="btn btn-danger btn-sm" title="Clear Search">
+              <i class="fa-solid fa-xmark"></i>
+            </a>
+          <% } %>
+        </form>
+
+        <div class="filter-pills">
+          <a href="/admin/members?filter=all<%= search ? '&search=' + search : '' %>" 
+             class="filter-pill <%= filter === 'all' ? 'active' : '' %>">All Members</a>
+          <a href="/admin/members?filter=active<%= search ? '&search=' + search : '' %>" 
+             class="filter-pill <%= filter === 'active' ? 'active' : '' %>">Active</a>
+          <a href="/admin/members?filter=expiring<%= search ? '&search=' + search : '' %>" 
+             class="filter-pill <%= filter === 'expiring' ? 'active' : '' %>">Expiring Soon</a>
+          <a href="/admin/members?filter=expired<%= search ? '&search=' + search : '' %>" 
+             class="filter-pill <%= filter === 'expired' ? 'active' : '' %>">Expired</a>
+        </div>
+      </div>
+
+      <!-- Members Table -->
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <% if (members && members.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Phone</th>
+                  <th>Assigned Trainer</th>
+                  <th>Membership Plan</th>
+                  <th>Start Date</th>
+                  <th>Expiry Date</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% members.forEach(m => { %>
+                  <tr>
+                    <td>
+                      <div style="font-weight: 600;"><%= m.name %></div>
+                      <div style="font-size: 0.8rem; color: var(--text-secondary);"><%= m.email %></div>
+                    </td>
+                    <td><%= m.phone || '<span style="color:var(--text-muted);">N/A</span>' %></td>
+                    <td>
+                      <% if (m.trainer) { %>
+                        <span style="font-weight: 500; color: #60a5fa;">
+                          <i class="fa-solid fa-user-ninja"></i> <%= m.trainer.name %>
+                        </span>
+                      <% } else { %>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">None</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <%= m.membership && m.membership.plan ? m.membership.plan.name : '<span style="color:var(--text-muted);">No Plan</span>' %>
+                    </td>
+                    <td>
+                      <%= m.membership ? new Date(m.membership.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—' %>
+                    </td>
+                    <td>
+                      <%= m.membership ? new Date(m.membership.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—' %>
+                    </td>
+                    <td>
+                      <% if (m.status === 'Active') { %>
+                        <% if (m.isExpiringSoon) { %>
+                          <span class="badge badge-expiring"><i class="fa-solid fa-clock"></i> Expiring (<%= m.daysRemaining %>d)</span>
+                        <% } else { %>
+                          <span class="badge badge-active"><i class="fa-solid fa-check"></i> Active</span>
+                        <% } %>
+                      <% } else if (m.status === 'Expired') { %>
+                        <span class="badge badge-expired"><i class="fa-solid fa-xmark"></i> Expired</span>
+                      <% } else { %>
+                        <span class="badge badge-no-plan"><i class="fa-solid fa-circle-minus"></i> No Plan</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <div class="action-buttons" style="justify-content: flex-end;">
+                        <a href="/admin/members/assign-membership/<%= m._id %>" class="btn btn-sm btn-secondary" title="Assign / Renew Plan">
+                          <i class="fa-solid fa-id-card"></i> Plan
+                        </a>
+                        <a href="/admin/assign-trainer?memberId=<%= m._id %>" class="btn btn-sm btn-secondary" title="Assign Trainer">
+                          <i class="fa-solid fa-user-check"></i> Trainer
+                        </a>
+                        <a href="/admin/members/edit/<%= m._id %>" class="btn btn-sm btn-secondary" title="Edit Member">
+                          <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <form action="/admin/members/<%= m._id %>?_method=DELETE" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to permanently delete member <%= m.name %>? This will delete all attendance, workout, and weight logs.');">
+                          <button type="submit" class="btn btn-sm btn-danger" title="Delete Member">
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-users-slash empty-state-icon"></i>
+            <h3 class="empty-state-title">No Members Found</h3>
+            <p class="empty-state-desc">
+              <%= search ? `No search results for "${search}". Try another keyword or clear filter.` : 'No gym members have been added yet.' %>
+            </p>
+            <a href="/admin/members/add" class="btn btn-primary">
+              <i class="fa-solid fa-user-plus"></i> Add New Member
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

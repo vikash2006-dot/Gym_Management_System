@@ -1,0 +1,121 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-gauge-high"></i> Trainer Dashboard</h1>
+          <p class="page-subtitle">Welcome coach <%= trainerName %>! Track your assigned trainees and workout programs.</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/trainer/members" class="btn btn-primary">
+            <i class="fa-solid fa-users"></i> My Members
+          </a>
+          <a href="/trainer/workouts" class="btn btn-secondary">
+            <i class="fa-solid fa-dumbbell"></i> Workout Plans
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <!-- Trainer Metric Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Assigned Members</span>
+            <span class="stat-value"><%= totalAssigned %></span>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-users"></i>
+          </div>
+        </div>
+
+        <div class="stat-card card-success">
+          <div class="stat-content">
+            <span class="stat-label">Active Members</span>
+            <span class="stat-value"><%= activeMembersCount %></span>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+        </div>
+
+        <div class="stat-card card-info">
+          <div class="stat-content">
+            <span class="stat-label">Today's Attendance</span>
+            <span class="stat-value"><%= todayAttendanceCount %></span>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+        </div>
+
+        <div class="stat-card card-warning">
+          <div class="stat-content">
+            <span class="stat-label">Plans Created</span>
+            <span class="stat-value"><%= plansCreatedCount %></span>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-file-pen"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actionable section: Members needing workout plans -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fa-solid fa-clipboard-list" style="color: var(--accent-warning);"></i> 
+            Members Requiring Workout Plans (<%= membersWithoutPlans.length %>)
+          </h2>
+          <a href="/trainer/members" class="btn btn-sm btn-secondary">View All Members</a>
+        </div>
+
+        <% if (membersWithoutPlans && membersWithoutPlans.length > 0) { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% membersWithoutPlans.forEach(m => { %>
+                  <tr>
+                    <td><strong><%= m.name %></strong></td>
+                    <td><%= m.email %></td>
+                    <td><%= m.phone || 'N/A' %></td>
+                    <td>
+                      <span class="badge badge-expiring">Pending Workout Plan</span>
+                    </td>
+                    <td>
+                      <div class="action-buttons" style="justify-content: flex-end;">
+                        <a href="/trainer/workouts/create/<%= m._id %>" class="btn btn-sm btn-primary">
+                          <i class="fa-solid fa-plus"></i> Create Workout Plan
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state" style="padding: 2rem 1rem;">
+            <i class="fa-solid fa-circle-check empty-state-icon" style="color: var(--accent-secondary);"></i>
+            <h3 class="empty-state-title">Great Job! All Assigned Members Have Workout Plans</h3>
+            <p class="empty-state-desc">Every member assigned to you currently has an active workout routine in place.</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

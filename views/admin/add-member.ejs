@@ -1,0 +1,78 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-user-plus"></i> Add New Member</h1>
+          <p class="page-subtitle">Register a new gym member and configure their trainer or plan</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/members" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Members
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card form-card">
+        <form action="/admin/members" method="POST">
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Rahul Sharma" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address <span class="req">*</span></label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="member@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password <span class="req">*</span></label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Initial password (min 6 characters)" minlength="6" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="trainerId" class="form-label">Assign Trainer (Optional)</label>
+              <select id="trainerId" name="trainerId" class="form-control">
+                <option value="">-- Select Trainer --</option>
+                <% trainers.forEach(t => { %>
+                  <option value="<%= t._id %>"><%= t.name %> (<%= t.email %>)</option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="planId" class="form-label">Initial Membership Plan (Optional)</label>
+              <select id="planId" name="planId" class="form-control">
+                <option value="">-- Select Plan --</option>
+                <% plans.forEach(p => { %>
+                  <option value="<%= p._id %>"><%= p.name %> (<%= p.duration %> days - ₹<%= p.price %>)</option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/admin/members" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-check"></i> Create Member
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>

@@ -1,0 +1,140 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-chart-line"></i> Weight Progress Analysis</h1>
+          <p class="page-subtitle">Visual timeline illustrating your fitness transformation over time</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/member/weight-log" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Weight Entry
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <!-- Progress Chart Container -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fa-solid fa-arrow-trend-up"></i> Body Weight Trendline (kg)
+          </h2>
+          <% if (weightLogs && weightLogs.length > 0) { %>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              Starting: <strong><%= weightLogs[0].weight %> kg</strong> &rarr; Current: <strong><%= weightLogs[weightLogs.length - 1].weight %> kg</strong>
+            </div>
+          <% } %>
+        </div>
+
+        <% if (weightLogs && weightLogs.length > 0) { %>
+          <div style="position: relative; height: 380px; width: 100%;">
+            <canvas id="memberWeightChart"></canvas>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-chart-area empty-state-icon"></i>
+            <h3 class="empty-state-title">No Weight Data Recorded</h3>
+            <p class="empty-state-desc">Log your weight over a few days or weeks to see your personal progress curve rendered here.</p>
+            <a href="/member/weight-log" class="btn btn-primary">
+              <i class="fa-solid fa-plus"></i> Log Your First Weight
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </main>
+
+    <% if (weightLogs && weightLogs.length > 0) { %>
+      <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+          try {
+            // Fetch strictly authorized weight data from API
+            const response = await fetch('/member/api/weight-data');
+            const data = await response.json();
+
+            const ctx = document.getElementById('memberWeightChart');
+            if (ctx && data.labels && data.labels.length > 0) {
+              // Create gradient
+              const chartCtx = ctx.getContext('2d');
+              const gradient = chartCtx.createLinearGradient(0, 0, 0, 350);
+              gradient.addColorStop(0, 'rgba(239, 68, 68, 0.35)');
+              gradient.addColorStop(1, 'rgba(239, 68, 68, 0.0)');
+
+              new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: data.labels,
+                  datasets: [{
+                    label: 'Weight (kg)',
+                    data: data.data,
+                    borderColor: '#ef4444',
+                    borderWidth: 3,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#ef4444',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false
+                    },
+                    tooltip: {
+                      backgroundColor: '#111827',
+                      titleColor: '#f8fafc',
+                      bodyColor: '#ef4444',
+                      borderColor: 'rgba(255, 255, 255, 0.1)',
+                      borderWidth: 1,
+                      padding: 12,
+                      displayColors: false,
+                      callbacks: {
+                        label: function(context) {
+                          return `Weight: ${context.parsed.y} kg`;
+                        }
+                      }
+                    }
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                      },
+                      ticks: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 11 }
+                      }
+                    },
+                    y: {
+                      grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                      },
+                      ticks: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 11 },
+                        callback: function(val) { return val + ' kg'; }
+                      }
+                    }
+                  }
+                }
+              });
+            }
+          } catch (err) {
+            console.error('Error fetching weight graph data:', err);
+          }
+        });
+      </script>
+    <% } %>
+<%- include('../partials/footer') %>

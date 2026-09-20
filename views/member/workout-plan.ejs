@@ -1,0 +1,69 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-fire-flame-curved"></i> My Workout Routine</h1>
+          <p class="page-subtitle">
+            <%= workoutPlan ? `Plan: "${workoutPlan.planName}" — Curated by Coach ${workoutPlan.trainer ? workoutPlan.trainer.name : 'Gym Trainer'}` : 'Custom fitness program designed by your assigned trainer' %>
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/member/dashboard" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Dashboard
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <% if (workoutPlan && workoutPlan.exercises && workoutPlan.exercises.length > 0) { %>
+        <div class="workout-days-grid">
+          <% daysOrder.forEach(day => { %>
+            <% const dayExercises = exercisesByDay[day] || []; %>
+            <div class="workout-day-card" style="<%= dayExercises.length === 0 ? 'opacity: 0.6; border-top-color: var(--border-color);' : '' %>">
+              <div class="workout-day-header">
+                <h3 class="workout-day-title">
+                  <i class="fa-solid fa-calendar-day" style="color: var(--accent-primary); margin-right: 0.4rem;"></i> <%= day %>
+                </h3>
+                <% if (dayExercises.length > 0) { %>
+                  <span class="badge badge-active"><%= dayExercises.length %> <%= dayExercises.length === 1 ? 'Exercise' : 'Exercises' %></span>
+                <% } else { %>
+                  <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Rest Day</span>
+                <% } %>
+              </div>
+
+              <% if (dayExercises.length > 0) { %>
+                <div class="exercise-list">
+                  <% dayExercises.forEach(ex => { %>
+                    <div class="exercise-item">
+                      <span class="exercise-name"><%= ex.exercise %></span>
+                      <span class="exercise-metrics"><%= ex.sets %> sets &times; <%= ex.reps %> reps</span>
+                    </div>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <p style="color: var(--text-muted); font-size: 0.85rem; padding: 0.5rem 0;">
+                  No exercises scheduled. Active recovery or rest.
+                </p>
+              <% } %>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="card">
+          <div class="empty-state">
+            <i class="fa-solid fa-dumbbell empty-state-icon"></i>
+            <h3 class="empty-state-title">No Workout Plan Assigned Yet</h3>
+            <p class="empty-state-desc">Your trainer has not yet configured a customized workout plan for you. Once assigned, your day-by-day split will appear here.</p>
+            <a href="/member/dashboard" class="btn btn-secondary">Return to Dashboard</a>
+          </div>
+        </div>
+      <% } %>
+    </main>
+<%- include('../partials/footer') %>

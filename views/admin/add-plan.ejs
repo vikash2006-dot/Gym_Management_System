@@ -1,0 +1,57 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<div class="app-layout">
+  <%- include('../partials/sidebar') %>
+
+  <div class="main-content-wrapper">
+    <main class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="fa-solid fa-plus"></i> Create Membership Plan</h1>
+          <p class="page-subtitle">Add a new membership package for gym members</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/admin/plans" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Plans
+          </a>
+        </div>
+      </div>
+
+      <%- include('../partials/flash') %>
+
+      <div class="card form-card">
+        <form action="/admin/plans" method="POST">
+          <div class="form-group">
+            <label for="name" class="form-label">Plan Name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Quarterly Pro Membership" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="duration" class="form-label">Duration (Days) <span class="req">*</span></label>
+              <input type="number" id="duration" name="duration" class="form-control" placeholder="e.g. 90" min="1" required>
+              <small style="color: var(--text-muted); font-size: 0.8rem;">e.g. 30 (Monthly), 90 (Quarterly), 365 (Yearly)</small>
+            </div>
+
+            <div class="form-group">
+              <label for="price" class="form-label">Price (₹) <span class="req">*</span></label>
+              <input type="number" id="price" name="price" class="form-control" placeholder="e.g. 2999" min="0" step="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description / Features</label>
+            <textarea id="description" name="description" class="form-control" placeholder="Full gym access, cardio area, locker access, etc."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <a href="/admin/plans" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-check"></i> Save Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+<%- include('../partials/footer') %>
